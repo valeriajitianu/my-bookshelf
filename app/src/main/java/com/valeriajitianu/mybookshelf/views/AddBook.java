@@ -16,6 +16,8 @@ import com.valeriajitianu.mybookshelf.BookStorage;
 import com.valeriajitianu.mybookshelf.Categories;
 import com.valeriajitianu.mybookshelf.R;
 
+import java.util.Calendar;
+
 public class AddBook extends AppCompatActivity {
     EditText bookTitle, bookAuthor;
     Spinner bookCategory;
@@ -69,6 +71,8 @@ public class AddBook extends AppCompatActivity {
         values.put("author", author);
         values.put("image_path", "");
         values.put("category", category);
+        //todo
+        values.put("created", Calendar.getInstance().getTime().toString());
         return values;
     }
 

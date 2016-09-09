@@ -8,19 +8,16 @@ import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import com.valeriajitianu.mybookshelf.Book;
+import com.valeriajitianu.mybookshelf.BookStorage;
 import com.valeriajitianu.mybookshelf.Categories;
 import com.valeriajitianu.mybookshelf.CustomList;
 import com.valeriajitianu.mybookshelf.R;
 
-public class MainScreen extends AppCompatActivity {
-    String[] textRecent = {
-            "Item 1",
-            "Item 2",
-            "Item 3",
-            "Item 4",
-            "Item 5"
-    };
+import java.util.ArrayList;
+import java.util.List;
 
+public class MainScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +35,9 @@ public class MainScreen extends AppCompatActivity {
             }
         });
 
+        List<Book> booksList = BookStorage.getInstance(this).getMostRecentBooks(5);
         ListView listRecent = (ListView) findViewById(R.id.listRecent);
-        listRecent.setAdapter(new CustomList(this, textRecent, R.drawable.arrow));
+        listRecent.setAdapter(new CustomList(this, getBookTitles(booksList), R.drawable.arrow));
 
         ImageButton addBook = (ImageButton) findViewById(R.id.addBook);
         addBook.setOnClickListener(new View.OnClickListener() {
@@ -50,5 +48,13 @@ public class MainScreen extends AppCompatActivity {
                 startActivity(addNewBook);
             }
         });
+    }
+
+    private String[] getBookTitles(List<Book> booksList) {
+        List<String> titlesList = new ArrayList<>();
+        for (Book book : booksList)
+            titlesList.add(book.getTitle());
+
+        return titlesList.toArray(new String[titlesList.size()]);
     }
 }

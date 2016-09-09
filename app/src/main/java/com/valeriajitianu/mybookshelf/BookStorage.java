@@ -22,7 +22,8 @@ public class BookStorage extends SQLiteOpenHelper {
                     "title CHAR(50) NOT NULL," +
                     "author CHAR(50)," +
                     "image_path CHAR(50)," +
-                    "category INT NOT NULL);";
+                    "category INT NOT NULL," +
+                    "created DATE NOT NULL);";
 
     private static BookStorage instance;
 
@@ -58,6 +59,19 @@ public class BookStorage extends SQLiteOpenHelper {
 
         while (rows.moveToNext()) {
             Book bookRow = new Book(rows.getString(0), rows.getString(1), rows.getString(2), categoryId);
+            listBooks.add(bookRow);
+        }
+
+        return listBooks;
+    }
+
+    public List<Book> getMostRecentBooks(int limit) {
+        List<Book> listBooks = new ArrayList<>();
+        Cursor rows = getReadableDatabase().query(TABLE_NAME, new String[]{"title, author, image_path, category"},
+                "",  null, "", "", "created DESC", limit + "");
+
+        while (rows.moveToNext()) {
+            Book bookRow = new Book(rows.getString(0), rows.getString(1), rows.getString(2), rows.getInt(3));
             listBooks.add(bookRow);
         }
 
