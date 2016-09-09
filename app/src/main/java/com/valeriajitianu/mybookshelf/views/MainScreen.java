@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
@@ -25,8 +26,17 @@ public class MainScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
-        ListView listView = (ListView) findViewById(R.id.listCategories);
-        listView.setAdapter(new CustomList(this, Categories.getCategoryValues(), R.drawable.arrow));
+        ListView categoryList = (ListView) findViewById(R.id.listCategories);
+        categoryList.setAdapter(new CustomList(this, Categories.getCategoryValues(), R.drawable.arrow));
+        categoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent viewBooksInCategory = new Intent();
+                viewBooksInCategory.putExtra("category", position);
+                viewBooksInCategory.setClass(getApplicationContext(), Category.class);
+                startActivity(viewBooksInCategory);
+            }
+        });
 
         ListView listRecent = (ListView) findViewById(R.id.listRecent);
         listRecent.setAdapter(new CustomList(this, textRecent, R.drawable.arrow));

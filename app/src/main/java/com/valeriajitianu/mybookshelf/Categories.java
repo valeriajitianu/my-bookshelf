@@ -6,17 +6,18 @@ package com.valeriajitianu.mybookshelf;
 public enum Categories {
     WISHLIST("Wishlist"), READ("Read"), CURRENTLY_READING("Currently reading");
 
-    String label;
-    Categories(String label) {
-        this.label = label;
+    String name;
+
+    Categories(String name) {
+        this.name = name;
     }
 
-    public String getLabel() {
-        return label;
+    public String getName() {
+        return name;
     }
 
     public static String[] getCategoryValues() {
-        String[] categories = {WISHLIST.getLabel(), READ.getLabel(), CURRENTLY_READING.getLabel()};
+        String[] categories = {WISHLIST.getName(), READ.getName(), CURRENTLY_READING.getName()};
         return categories;
     }
 }

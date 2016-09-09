@@ -16,7 +16,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".views.AddBook" />
-        <activity android:name=".views.Category"></activity>
+        <activity android:name=".views.Category" />
+        <activity android:name=".views.BookDetails"></activity>
     </application>
 
 </manifest>

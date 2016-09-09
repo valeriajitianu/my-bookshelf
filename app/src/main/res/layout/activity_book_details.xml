@@ -7,30 +7,37 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".views.Category">
+    tools:context="com.valeriajitianu.mybookshelf.views.BookDetails">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/categoryName"
-        android:layout_marginTop="7dp"
+        android:text="Large Text"
+        android:id="@+id/tBook"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <ListView
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/listBooksInCategory"
-        android:layout_below="@+id/categoryName"
-        android:layout_marginTop="30dp" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/aBook"
+        android:layout_below="@+id/tBook"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="38dp" />
 
-    <ImageButton
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/listBooksInCategory"
-        android:id="@+id/backButton"
-        android:src="@drawable/back_button"
-        android:layout_marginTop="30dp"/>
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/cBook"
+        android:layout_below="@+id/aBook"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="37dp" />
 </RelativeLayout>

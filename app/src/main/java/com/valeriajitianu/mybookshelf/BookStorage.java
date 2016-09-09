@@ -2,8 +2,12 @@ package com.valeriajitianu.mybookshelf;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Valeria.Jitianu on 08.09.2016.
@@ -45,5 +49,18 @@ public class BookStorage extends SQLiteOpenHelper {
         if (getWritableDatabase().insert(TABLE_NAME, null, values) == -1)
             return false;
         return true;
+    }
+
+    public List<Book> getBooksInCategory(int categoryId) {
+        List<Book> listBooks = new ArrayList<>();
+        Cursor rows = getReadableDatabase().query(TABLE_NAME, new String[]{"title, author, image_path"},
+                "category = " + categoryId,  null, "", "", "");
+
+        while (rows.moveToNext()) {
+            Book bookRow = new Book(rows.getString(0), rows.getString(1), rows.getString(2), categoryId);
+            listBooks.add(bookRow);
+        }
+
+        return listBooks;
     }
 }
