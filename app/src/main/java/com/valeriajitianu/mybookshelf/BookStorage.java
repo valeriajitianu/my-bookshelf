@@ -23,7 +23,7 @@ public class BookStorage extends SQLiteOpenHelper {
                     "author CHAR(50)," +
                     "image_path CHAR(50)," +
                     "category INT NOT NULL," +
-                    "created DATE NOT NULL);";
+                    "created INTEGER NOT NULL);";
 
     private static BookStorage instance;
 

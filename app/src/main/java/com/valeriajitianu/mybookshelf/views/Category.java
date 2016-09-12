@@ -28,13 +28,25 @@ public class Category extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_view);
+
         categoryId = getIntent().getIntExtra("category", 0);
-        categoryName = getCategoryName(categoryId);
         booksList = BookStorage.getInstance(getApplicationContext()).getBooksInCategory(categoryId);
 
         TextView categoryText = (TextView) findViewById(R.id.categoryName);
-        categoryText.setText(categoryName);
+        categoryText.setText(getCategoryName(categoryId));
 
+        populateListOfBooksInCategory();
+
+        ImageButton backButton = (ImageButton) findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
+    private void populateListOfBooksInCategory() {
         ListView books = (ListView) findViewById(R.id.listBooksInCategory);
         books.setAdapter(new CustomList(this, getBookTitles(), R.drawable.arrow));
         books.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -44,14 +56,6 @@ public class Category extends AppCompatActivity {
                 viewBook.putExtra("bookDetails", booksList.get(position));
                 viewBook.setClass(getApplicationContext(), BookDetails.class);
                 startActivity(viewBook);
-            }
-        });
-
-        ImageButton backButton = (ImageButton) findViewById(R.id.backButton);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
             }
         });
     }

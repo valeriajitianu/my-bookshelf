@@ -53,9 +53,11 @@
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <ImageButton
-            android:id="@+id/imageButton"
+            android:id="@+id/bookImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxHeight="50dp"
+            android:maxWidth="50dp"
             android:src="@drawable/addphoto" />
 
         <TextView

@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -16,7 +17,7 @@ import com.valeriajitianu.mybookshelf.BookStorage;
 import com.valeriajitianu.mybookshelf.Categories;
 import com.valeriajitianu.mybookshelf.R;
 
-import java.util.Calendar;
+import java.util.Date;
 
 public class AddBook extends AppCompatActivity {
     EditText bookTitle, bookAuthor;
@@ -31,14 +32,22 @@ public class AddBook extends AppCompatActivity {
         bookTitle = (EditText) findViewById(R.id.bookTitle);
         bookAuthor = (EditText) findViewById(R.id.bookAuthor);
 
-        setupCategorySpinner();
+        populateSpinnerWithCategories();
 
-        setupCancelButtonAction();
+        ImageButton bookImage = (ImageButton) findViewById(R.id.bookImage);
+        bookImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        setupAddBookButtonAction();
+            }
+        });
+
+        goBackWhenCancelButtonClicked();
+
+        saveBookWhenAddButtonClicked();
     }
 
-    private void setupAddBookButtonAction() {
+    private void saveBookWhenAddButtonClicked() {
         Button addBookButton = (Button) findViewById(R.id.addBook);
         addBookButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,12 +80,11 @@ public class AddBook extends AppCompatActivity {
         values.put("author", author);
         values.put("image_path", "");
         values.put("category", category);
-        //todo
-        values.put("created", Calendar.getInstance().getTime().toString());
+        values.put("created", new Date().getTime());
         return values;
     }
 
-    private void setupCancelButtonAction() {
+    private void goBackWhenCancelButtonClicked() {
         Button cancelButton = (Button) findViewById(R.id.cancel);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,9 +94,9 @@ public class AddBook extends AppCompatActivity {
         });
     }
 
-    private void setupCategorySpinner() {
+    private void populateSpinnerWithCategories() {
         bookCategory = (Spinner) findViewById(R.id.categoryChoice);
-        bookCategory.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, Categories.getCategoryValues()));
+        bookCategory.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Categories.getCategoryValues()));
         bookCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

@@ -18,13 +18,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainScreen extends AppCompatActivity {
+    List<Book> booksList;
+    ListView categoryList;
+    ImageButton addBook;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
-        ListView categoryList = (ListView) findViewById(R.id.listCategories);
+        categoryList = (ListView) findViewById(R.id.listCategories);
         categoryList.setAdapter(new CustomList(this, Categories.getCategoryValues(), R.drawable.arrow));
+        viewBooksInCategoryWhenItemClicked();
+
+        booksList = BookStorage.getInstance(this).getMostRecentBooks(5);
+        populateListRecentBooks();
+
+        addBook = (ImageButton) findViewById(R.id.addBook);
+        openAddBookActivityWhenClicked();
+    }
+
+    protected void onResume() {
+        super.onResume();
+        booksList = BookStorage.getInstance(this).getMostRecentBooks(5);
+        populateListRecentBooks();
+    }
+
+    private void openAddBookActivityWhenClicked() {
+        addBook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent addNewBook = new Intent();
+                addNewBook.setClass(getApplicationContext(), AddBook.class);
+                startActivity(addNewBook);
+            }
+        });
+    }
+
+    private void viewBooksInCategoryWhenItemClicked() {
         categoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -34,18 +65,18 @@ public class MainScreen extends AppCompatActivity {
                 startActivity(viewBooksInCategory);
             }
         });
+    }
 
-        List<Book> booksList = BookStorage.getInstance(this).getMostRecentBooks(5);
+    private void populateListRecentBooks() {
         ListView listRecent = (ListView) findViewById(R.id.listRecent);
         listRecent.setAdapter(new CustomList(this, getBookTitles(booksList), R.drawable.arrow));
-
-        ImageButton addBook = (ImageButton) findViewById(R.id.addBook);
-        addBook.setOnClickListener(new View.OnClickListener() {
+        listRecent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent addNewBook = new Intent();
-                addNewBook.setClass(getApplicationContext(), AddBook.class);
-                startActivity(addNewBook);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent viewBook = new Intent();
+                viewBook.putExtra("bookDetails", booksList.get(position));
+                viewBook.setClass(getApplicationContext(), BookDetails.class);
+                startActivity(viewBook);
             }
         });
     }
