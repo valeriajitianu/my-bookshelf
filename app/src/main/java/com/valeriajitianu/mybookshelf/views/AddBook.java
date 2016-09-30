@@ -1,17 +1,15 @@
 package com.valeriajitianu.mybookshelf.views;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
-import android.provider.DocumentsContract;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -28,18 +26,20 @@ import com.valeriajitianu.mybookshelf.Categories;
 import com.valeriajitianu.mybookshelf.R;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static android.app.Activity.*;
 
 public class AddBook extends AppCompatActivity {
     final String CHOOSE_FROM_LIBRARY = "Choose from Library";
-    final String ANDROID_SYSTEM_UPGRADE_MESSAGE = "Your current Android system doesn't support adding images. Please upgrade.";
     EditText bookTitle, bookAuthor;
     Spinner bookCategory;
     ImageView bookImage;
     long category = 1;
-    final int OPEN_IMAGE = 1;
+    final int CAPTURE_IMAGE = 1;
     private String imagePath = "";
-    final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +55,7 @@ public class AddBook extends AppCompatActivity {
         bookImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isKitKat)
-                    selectImageForBook();
-                else
-                    Toast.makeText(AddBook.this, ANDROID_SYSTEM_UPGRADE_MESSAGE, Toast.LENGTH_SHORT).show();
+                captureImageForBook();
             }
         });
 
@@ -67,61 +64,40 @@ public class AddBook extends AppCompatActivity {
         saveBookWhenAddButtonClicked();
     }
 
+    private void captureImageForBook() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createFileForImage();
+            } catch (IOException ex) {
+                Toast.makeText(AddBook.this, "Could not save file.", Toast.LENGTH_SHORT).show();
+            }
+
+            if (photoFile != null) {
+                Uri photoUri = FileProvider.getUriForFile(this, "com.valeriajitianu.mybookshelf.fileprovider", photoFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                startActivityForResult(intent, CAPTURE_IMAGE);
+            }
+        }
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == OPEN_IMAGE)
-            if (resultCode == Activity.RESULT_OK) {
-                imagePath = getImagePath(data);
-                File imageFile = new File(imagePath);
-                if (imageFile.exists()) {
-                    Bitmap bitmapImage = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
-                    bookImage.setImageBitmap(bitmapImage);
-                }
-            }
-    }
-
-    private void selectImageForBook() {
-        if (Utility.checkPermission(getApplicationContext())) {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/*");
-            startActivityForResult(Intent.createChooser(intent, CHOOSE_FROM_LIBRARY), OPEN_IMAGE);
+        if (requestCode == CAPTURE_IMAGE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            bookImage.setImageBitmap(imageBitmap);
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    private String getImagePath(Intent data) {
-        Uri imageUri = data.getData();
-        if (DocumentsContract.isDocumentUri(getApplicationContext(), imageUri)) {
-            if (isMediaDocument(imageUri)) {
-                final String docId = DocumentsContract.getDocumentId(imageUri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
+    private File createFileForImage() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
 
-                Uri contentUri = null;
-                if ("image".equals(type))
-                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                final String selection = "_id=?";
-                final String[] selectionArgs = new String[]{
-                        split[1]
-                };
-
-            }
-                String[] projection = {MediaStore.Images.Media.DATA};
-
-                Cursor cursor = getContentResolver().query(imageUri, projection, null, null, null);
-                if (cursor != null) {
-                    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                    cursor.moveToFirst();
-                    return cursor.getString(column_index);
-                }
-            getContentResolver().query(imageUri, projection, "_id=?", new String[]{DocumentsContract.getDocumentId(imageUri).split(":")[1]}, null);
-            return imageUri.getPath();
-        }
-        return null;
-        }
-
-    private static boolean isMediaDocument(Uri uri) {
-        return "com.android.providers.media.documents".equals(uri.getAuthority());
+        imagePath = "file:" + image.getAbsolutePath();
+        return image;
     }
 
     private void saveBookWhenAddButtonClicked() {
